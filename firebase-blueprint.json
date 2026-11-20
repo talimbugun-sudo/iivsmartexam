@@ -1,0 +1,332 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile and RBAC role assignment.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 200 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "photoUrl": { "type": "string", "maxLength": 500000 },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "teacher", "student"] },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "role", "createdAt", "updatedAt"]
+    },
+    "RoleInvite": {
+      "title": "RoleInvite",
+      "description": "Pre-assigned role grant for staff email addresses.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "teacher", "student"] },
+        "assignedBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "displayName", "role", "assignedBy", "createdAt"]
+    },
+    "Group": {
+      "title": "Group",
+      "description": "Academic student group/class.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "description": { "type": "string", "maxLength": 300 },
+        "curatorName": { "type": "string", "maxLength": 120 },
+        "isDemo": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "isDemo", "createdBy", "createdAt", "updatedAt"]
+    },
+    "Subject": {
+      "title": "Subject",
+      "description": "Academic subject for tests and analytics.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "code": { "type": "string", "maxLength": 30 },
+        "description": { "type": "string", "maxLength": 300 },
+        "teacherName": { "type": "string", "maxLength": 120 },
+        "isDemo": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "isDemo", "createdBy", "createdAt", "updatedAt"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student directory profile without sensitive credentials.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "groupId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "groupName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "login": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "photoUrl": { "type": "string", "maxLength": 500000 },
+        "isDemo": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fullName", "groupId", "groupName", "login", "isDemo", "createdBy", "createdAt", "updatedAt"]
+    },
+    "StudentCredential": {
+      "title": "StudentCredential",
+      "description": "Isolated student login password and private contact metadata.",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "login": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "password": { "type": "string", "minLength": 3, "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentId", "login", "password", "updatedAt"]
+    },
+    "StudentAuthHash": {
+      "title": "StudentAuthHash",
+      "description": "SHA-256 credential lookup by student login key (single-get only).",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "groupId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "passwordHash": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["studentId", "groupId", "passwordHash", "updatedAt"]
+    },
+    "TestExam": {
+      "title": "TestExam",
+      "description": "Assessment/test configuration metadata.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "subjectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "subjectName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "groupIds": { "type": "array", "description": "Assigned group IDs (max 20)." },
+        "examType": { "type": "string", "enum": ["oraliq", "joriy", "yakuniy"] },
+        "durationMinutes": { "type": "integer" },
+        "questionCount": { "type": "integer" },
+        "totalPoints": { "type": "number" },
+        "shuffleQuestions": { "type": "boolean" },
+        "shuffleOptions": { "type": "boolean" },
+        "maxAttempts": { "type": "integer" },
+        "status": { "type": "string", "enum": ["draft", "active", "archived"] },
+        "isDemo": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "title",
+        "subjectId",
+        "subjectName",
+        "groupIds",
+        "examType",
+        "durationMinutes",
+        "questionCount",
+        "totalPoints",
+        "shuffleQuestions",
+        "shuffleOptions",
+        "maxAttempts",
+        "status",
+        "isDemo",
+        "createdBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "Individual question inside a test subcollection.",
+      "type": "object",
+      "properties": {
+        "testId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "order": { "type": "integer" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "imageUrl": { "type": "string", "maxLength": 500000 },
+        "options": { "type": "array", "description": "Four answer choices." },
+        "correctIndex": { "type": "integer" },
+        "points": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["testId", "order", "text", "options", "correctIndex", "points", "createdAt"]
+    },
+    "Attempt": {
+      "title": "Attempt",
+      "description": "Immutable completed exam submission and graded score.",
+      "type": "object",
+      "properties": {
+        "testId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "testTitle": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "subjectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "subjectName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "groupId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "groupName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "examType": { "type": "string", "enum": ["oraliq", "joriy", "yakuniy"] },
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "studentPhotoUrl": { "type": "string", "maxLength": 500000 },
+        "studentUid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "score": { "type": "number" },
+        "maxScore": { "type": "number" },
+        "percentage": { "type": "number" },
+        "correctCount": { "type": "integer" },
+        "totalQuestions": { "type": "integer" },
+        "attemptNumber": { "type": "integer" },
+        "durationSpentSeconds": { "type": "integer" },
+        "answers": { "type": "array", "description": "Graded answers up to 100." },
+        "status": { "type": "string", "enum": ["completed"] },
+        "isDemo": { "type": "boolean" },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "testId",
+        "testTitle",
+        "subjectId",
+        "subjectName",
+        "groupId",
+        "groupName",
+        "examType",
+        "studentId",
+        "studentName",
+        "studentUid",
+        "score",
+        "maxScore",
+        "percentage",
+        "correctCount",
+        "totalQuestions",
+        "attemptNumber",
+        "durationSpentSeconds",
+        "answers",
+        "status",
+        "isDemo",
+        "submittedAt"
+      ]
+    },
+    "LiveSession": {
+      "title": "LiveSession",
+      "description": "Real-time exam progress, auto-save answers, and monitoring state.",
+      "type": "object",
+      "properties": {
+        "testId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "studentName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "studentPhotoUrl": { "type": "string", "maxLength": 500000 },
+        "groupId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "groupName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "studentUid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "status": { "type": "string", "enum": ["not_started", "entered", "working", "finished"] },
+        "answeredCount": { "type": "integer" },
+        "totalQuestions": { "type": "integer" },
+        "remainingSeconds": { "type": "integer" },
+        "draftAnswers": { "type": "object" },
+        "score": { "type": "number" },
+        "percentage": { "type": "number" },
+        "isDemo": { "type": "boolean" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "testId",
+        "studentId",
+        "studentName",
+        "groupId",
+        "groupName",
+        "studentUid",
+        "status",
+        "answeredCount",
+        "totalQuestions",
+        "remainingSeconds",
+        "draftAnswers",
+        "isDemo",
+        "updatedAt"
+      ]
+    },
+    "AiReport": {
+      "title": "AiReport",
+      "description": "Server-grounded Gemini AI analysis report stored for reference.",
+      "type": "object",
+      "properties": {
+        "scope": { "type": "string", "enum": ["overall", "group", "student", "subject"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "targetName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 8000 },
+        "strengths": { "type": "array" },
+        "weaknesses": { "type": "array" },
+        "recommendations": { "type": "array" },
+        "generatedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "isDemo": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "scope",
+        "targetName",
+        "summary",
+        "strengths",
+        "weaknesses",
+        "recommendations",
+        "generatedBy",
+        "isDemo",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User authentication profiles and RBAC roles."
+    },
+    "/role_invites/{inviteId}": {
+      "schema": { "$ref": "#/entities/RoleInvite" },
+      "description": "Role invitations mapped to staff emails."
+    },
+    "/groups/{groupId}": {
+      "schema": { "$ref": "#/entities/Group" },
+      "description": "Academic student groups."
+    },
+    "/subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/Subject" },
+      "description": "Academic subjects."
+    },
+    "/students/{studentId}": {
+      "schema": { "$ref": "#/entities/Student" },
+      "description": "Student directory records."
+    },
+    "/students/{studentId}/private/credentials": {
+      "schema": { "$ref": "#/entities/StudentCredential" },
+      "description": "PII and password credentials isolated from directory."
+    },
+    "/student_auth/{loginKey}": {
+      "schema": { "$ref": "#/entities/StudentAuthHash" },
+      "description": "Single-get SHA-256 credential lookup by student login."
+    },
+    "/tests/{testId}": {
+      "schema": { "$ref": "#/entities/TestExam" },
+      "description": "Tests and assessment configurations."
+    },
+    "/tests/{testId}/questions/{questionId}": {
+      "schema": { "$ref": "#/entities/Question" },
+      "description": "Questions belonging to a parent test."
+    },
+    "/attempts/{attemptId}": {
+      "schema": { "$ref": "#/entities/Attempt" },
+      "description": "Completed exam attempts."
+    },
+    "/live_sessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/LiveSession" },
+      "description": "Real-time exam monitoring and auto-save sessions."
+    },
+    "/ai_reports/{reportId}": {
+      "schema": { "$ref": "#/entities/AiReport" },
+      "description": "Saved Gemini AI diagnostic reports."
+    }
+  }
+}

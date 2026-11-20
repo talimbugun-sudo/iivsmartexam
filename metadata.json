@@ -1,0 +1,6 @@
+{
+  "name": "ORALIQ NAZORAT — AI Ta'lim Nazorat Platformasi",
+  "description": "O‘quvchilarni fanlar va guruhlar bo‘yicha test qilish, jonli monitoring, analitika, hisobotlar va Gemini AI tahlil platformasi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
